@@ -1,0 +1,4 @@
+lurkerbot
+=========
+
+IRC InfoBot
