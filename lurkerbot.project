@@ -1,14 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="lurkerbot" InternalType="Console">
+  <Plugins>
+    <Plugin Name="CMakePlugin">
+      <![CDATA[[{
+		"name":	"Debug",
+		"enabled":	false,
+		"buildDirectory":	"build",
+		"sourceDirectory":	"$(ProjectPath)",
+		"generator":	"",
+		"buildType":	"",
+		"arguments":	[],
+		"parentProject":	""
+	}]]]>
+    </Plugin>
+    <Plugin Name="qmake">
+      <![CDATA[00010001N0005Debug000000000000]]>
+    </Plugin>
+  </Plugins>
   <Description/>
   <Dependencies/>
+  <VirtualDirectory Name="src">
+    <File Name="main.c"/>
+  </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
         <IncludePath Value="."/>
+        <IncludePath Value="/usr/include/libircclient"/>
       </Compiler>
       <Linker Options="">
         <LibraryPath Value="."/>
+        <Library Value="libircclient.so"/>
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
@@ -90,7 +112,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="src">
-    <File Name="main.c"/>
-  </VirtualDirectory>
 </CodeLite_Project>
