@@ -22,15 +22,19 @@
   <VirtualDirectory Name="src">
     <File Name="main.c"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
         <IncludePath Value="."/>
         <IncludePath Value="/usr/include/libircclient"/>
+        <IncludePath Value="/usr/include/json-c"/>
       </Compiler>
       <Linker Options="">
         <LibraryPath Value="."/>
         <Library Value="libircclient.so"/>
+        <Library Value="libjson-c.so"/>
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
@@ -112,6 +116,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
 </CodeLite_Project>

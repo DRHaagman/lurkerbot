@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "libircclient.h"
+#include "json.h"
 
 typedef struct {
 	char 	* channel;
@@ -12,6 +13,11 @@ typedef struct {
 
 } irc_ctx_t;
 
+void ReadConfig(const char * filename) {
+	// Read the config file
+	// Parse out the JSON and apply each server to an array of context structs.
+	fopen(filename, "ro");
+}
 void addlog(const char * fmt, ...) {
 	FILE * fp;
 	char buf[1024];
@@ -33,22 +39,6 @@ void addlog(const char * fmt, ...) {
 	}
 }
 
-void notice_event(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
-	char buf[512];
-	int cnt;
-
-	buf[0] = '\0';
-
-	for ( cnt = 0; cnt < count; cnt++ ) {
-		if ( cnt )
-			strcat (buf, "|");
-
-		strcat (buf, params[cnt]);
-	}
-
-	addlog ("Event \"%s\", origin: \"%s\", params: %d [%s]", event, origin ? origin : "NULL", cnt, buf);
-}
-
 void dump_event(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
 	char buf[512];
 	int cnt;
@@ -62,7 +52,11 @@ void dump_event(irc_session_t * session, const char * event, const char * origin
 		strcat (buf, params[cnt]);
 	}
 
-	addlog ("Event \"%s\", origin: \"%s\", params: %d [%s]", event, origin ? origin : "NULL", cnt, buf);
+	addlog ("Ev \"%s\", Or: \"%s\", Pa: %d [%s]", event, origin ? origin : "NULL", cnt, buf);
+}
+
+void notice_event(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
+	dump_event (session, event, origin, params, count);
 }
 
 void event_join(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
@@ -81,9 +75,22 @@ void event_connect(irc_session_t * session, const char * event, const char * ori
 void event_privmsg(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
 	dump_event (session, event, origin, params, count);
 
-	printf ("'%s' said me (%s): %s\n",
-		origin ? origin : "someone",
-		params[0], params[1] );
+	if ( !strcmp (params[1], "quit") )
+		irc_cmd_quit (session, "of course, Master!");
+	if ( strstr (params[1], "mode ") == params[1] )
+		irc_cmd_channel_mode (session, params[0], params[1] + 5);
+	if ( strstr (params[1], "nick ") == params[1] )
+		irc_cmd_nick (session, params[1] + 5);
+	if ( strstr (params[1], "whois ") == params[1] )
+		irc_cmd_whois (session, params[1] + 5);
+	if ( !strcmp (params[1], "help") )
+		irc_cmd_msg (session, params[0], "quit, help, dcc chat, dcc send, ctcp");
+	if ( !strcmp (params[1], "topic") )
+		irc_cmd_topic (session, params[0], 0);
+	else if ( strstr (params[1], "topic ") == params[1] )
+		irc_cmd_topic (session, params[0], params[1] + 6);
+
+	printf ("'%s' said me (%s): %s\n", origin ? origin : "someone", params[0], params[1] );
 }
 
 void dcc_recv_callback(irc_session_t * session, irc_dcc_t id, int status, void * ctx, const char * data, unsigned int length) {
@@ -139,29 +146,27 @@ void event_channel(irc_session_t * session, const char * event, const char * ori
 	if ( count != 2 )
 		return;
 
-	printf ("'%s' said in channel %s: %s\n",
-		origin ? origin : "someone",
-		params[0], params[1] );
+	printf ("'%s' said in channel %s: %s\n", origin ? origin : "someone", params[0], params[1] );
 
 	if ( !origin )
 		return;
 
 	irc_target_get_nick (origin, nickbuf, sizeof(nickbuf));
 
-	if ( !strcmp (params[1], "quit") )
-		irc_cmd_quit (session, "of course, Master!");
+//	if ( !strcmp (params[1], "quit") )
+//		irc_cmd_quit (session, "of course, Master!");
 
-	if ( !strcmp (params[1], "help") ) {
+	if ( !strcmp (params[1], "~help") )
 		irc_cmd_msg (session, params[0], "quit, help, dcc chat, dcc send, ctcp");
-	}
 
-	if ( !strcmp (params[1], "ctcp") ) {
+	if ( !strcmp (params[1], "~ctcp") ) {
 		irc_cmd_ctcp_request (session, nickbuf, "PING 223");
 		irc_cmd_ctcp_request (session, nickbuf, "FINGER");
 		irc_cmd_ctcp_request (session, nickbuf, "VERSION");
 		irc_cmd_ctcp_request (session, nickbuf, "TIME");
 	}
 
+/*
 	if ( !strcmp (params[1], "dcc chat") ) {
 		irc_dcc_t dccid;
 		irc_dcc_chat (session, 0, nickbuf, dcc_recv_callback, &dccid);
@@ -173,20 +178,13 @@ void event_channel(irc_session_t * session, const char * event, const char * ori
 		irc_dcc_sendfile (session, 0, nickbuf, "irctest.c", dcc_file_recv_callback, &dccid);
 		printf ("DCC send ID: %d\n", dccid);
 	}
+*/
 
 	if ( !strcmp (params[1], "topic") )
 		irc_cmd_topic (session, params[0], 0);
 	else if ( strstr (params[1], "topic ") == params[1] )
 		irc_cmd_topic (session, params[0], params[1] + 6);
 
-	if ( strstr (params[1], "mode ") == params[1] )
-		irc_cmd_channel_mode (session, params[0], params[1] + 5);
-
-	if ( strstr (params[1], "nick ") == params[1] )
-		irc_cmd_nick (session, params[1] + 5);
-
-	if ( strstr (params[1], "whois ") == params[1] )
-		irc_cmd_whois (session, params[1] + 5);
 }
 
 void irc_event_dcc_chat(irc_session_t * session, const char * nick, const char * addr, irc_dcc_t dccid) {
@@ -206,14 +204,13 @@ void irc_event_dcc_send(irc_session_t * session, const char * nick, const char *
 }
 
 void event_numeric(irc_session_t * session, unsigned int event, const char * origin, const char ** params, unsigned int count) {
-	char buf[24];
-	sprintf (buf, "%d", event);
+//	char buf[24];
+//	sprintf (buf, "%d", event);
 
-	dump_event (session, buf, origin, params, count);
+//	dump_event (session, buf, origin, params, count);
 }
 
-int main (int argc, char **argv)
-{
+int main (int argc, char **argv) {
 	irc_callbacks_t	callbacks;
 	irc_ctx_t ctx;
 	irc_session_t * s;
