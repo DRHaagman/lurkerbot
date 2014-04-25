@@ -1,19 +1,18 @@
 #ifndef INCLUDE_MAIN_H
 #define INCLUDE_MAIN_H
 
-typedef struct {
-	char *server;
-	unsigned short port;
-	char *channel;
-	char *nick;
-	char *nickpass;
-	char *password;
-	char *username;
-	char *realname;
-} irc_ctx_t;
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+#include <stdlib.h>
 
-irc_ctx_t servers[255];
+#include "libircclient.h"
+#include "json.h"
 
-void addlog(const char * fmt, ...);
+#include "configurator.h"
+#include "session.h"
 
+namespace TWDevNet {
+	void addlog(const char * fmt, ...);
+}
 #endif // INCLUDE_MAIN_H
