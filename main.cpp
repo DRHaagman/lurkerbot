@@ -8,20 +8,6 @@
 
 #include "main.h"
 
-typedef struct {
-	char * server;
-	unsigned short port;
-	char * channel;
-	char * nick;
-	char * nickpass;
-	char * password;
-	char * username;
-	char * realname;
-
-} irc_ctx_t;
-
-irc_ctx_t servers[255];
-
 void ReadConfig(const char * filename) {
 	// Read the config file
 	// Parse out the JSON and apply each server to an array of context structs.
@@ -29,7 +15,7 @@ void ReadConfig(const char * filename) {
 	config = json_object_from_file(filename);
 
 	addlog("%s", json_object_to_json_string(config));
-
+/*
 	servers[0].server = "irc.freenode.net";
 	servers[0].port = 6667;
 	servers[0].channel = (char*)"#twdev.bot"; //argv[3];
@@ -38,6 +24,7 @@ void ReadConfig(const char * filename) {
 	servers[0].username = "lurker";
 	servers[0].realname = "Lurker Bot";
 	servers[0].nickpass = "TvYxEw8M";
+*/
 }
 void addlog(const char * fmt, ...) {
 	FILE * fp;
@@ -62,7 +49,7 @@ void addlog(const char * fmt, ...) {
 
 void dump_event(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
 	char buf[512];
-	int cnt;
+	unsigned int cnt;
 
 	buf[0] = '\0';
 

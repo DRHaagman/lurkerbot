@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="lurkerbot" InternalType="Console">
+  <Reconciliation>
+    <Regexes/>
+    <Excludepaths/>
+    <Ignorefiles/>
+    <Extensions>
+      <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp]]>
+    </Extensions>
+    <Topleveldir>../lurkerbot</Topleveldir>
+  </Reconciliation>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00010001N0005Debug000000000000]]>
@@ -20,10 +29,41 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
-    <File Name="main.c"/>
+    <File Name="main.h"/>
+    <File Name="irc.cpp"/>
+    <File Name="main.cpp"/>
+    <File Name="configurator.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
+  <VirtualDirectory Name="libircclient">
+    <File Name="../../../../../../../usr/include/libircclient/libirc_errors.h"/>
+    <File Name="../../../../../../../usr/include/libircclient/libirc_events.h"/>
+    <File Name="../../../../../../../usr/include/libircclient/libirc_options.h"/>
+    <File Name="../../../../../../../usr/include/libircclient/libirc_rfcnumeric.h"/>
+    <File Name="../../../../../../../usr/include/libircclient/libircclient.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="json">
+    <File Name="../../../../../../../usr/include/json-c/arraylist.h"/>
+    <File Name="../../../../../../../usr/include/json-c/bits.h"/>
+    <File Name="../../../../../../../usr/include/json-c/debug.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json_c_version.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json_config.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json_inttypes.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json_object.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json_object_iterator.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json_object_private.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json_tokener.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json_util.h"/>
+    <File Name="../../../../../../../usr/include/json-c/linkhash.h"/>
+    <File Name="../../../../../../../usr/include/json-c/printbuf.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="Extras">
+    <File Name="configuration.json" ExcludeProjConfig="Debug"/>
+    <File Name="Debug/irctest.log" ExcludeProjConfig="Debug"/>
+    <File Name="lurkerbot.dia" ExcludeProjConfig="Debug"/>
+  </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -38,7 +78,7 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="Debug" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-O0;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
       </Compiler>
@@ -116,31 +156,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="libircclient">
-    <File Name="../../../../../../../usr/include/libircclient/libirc_errors.h"/>
-    <File Name="../../../../../../../usr/include/libircclient/libirc_events.h"/>
-    <File Name="../../../../../../../usr/include/libircclient/libirc_options.h"/>
-    <File Name="../../../../../../../usr/include/libircclient/libirc_rfcnumeric.h"/>
-    <File Name="../../../../../../../usr/include/libircclient/libircclient.h"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="json">
-    <File Name="../../../../../../../usr/include/json-c/arraylist.h"/>
-    <File Name="../../../../../../../usr/include/json-c/bits.h"/>
-    <File Name="../../../../../../../usr/include/json-c/debug.h"/>
-    <File Name="../../../../../../../usr/include/json-c/json.h"/>
-    <File Name="../../../../../../../usr/include/json-c/json_c_version.h"/>
-    <File Name="../../../../../../../usr/include/json-c/json_config.h"/>
-    <File Name="../../../../../../../usr/include/json-c/json_inttypes.h"/>
-    <File Name="../../../../../../../usr/include/json-c/json_object.h"/>
-    <File Name="../../../../../../../usr/include/json-c/json_object_iterator.h"/>
-    <File Name="../../../../../../../usr/include/json-c/json_object_private.h"/>
-    <File Name="../../../../../../../usr/include/json-c/json_tokener.h"/>
-    <File Name="../../../../../../../usr/include/json-c/json_util.h"/>
-    <File Name="../../../../../../../usr/include/json-c/linkhash.h"/>
-    <File Name="../../../../../../../usr/include/json-c/printbuf.h"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="Extras">
-    <File Name="configuration.json"/>
-    <File Name="Debug/irctest.log"/>
-  </VirtualDirectory>
 </CodeLite_Project>
