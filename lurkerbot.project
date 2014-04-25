@@ -116,4 +116,31 @@
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="libircclient">
+    <File Name="../../../../../../../usr/include/libircclient/libirc_errors.h"/>
+    <File Name="../../../../../../../usr/include/libircclient/libirc_events.h"/>
+    <File Name="../../../../../../../usr/include/libircclient/libirc_options.h"/>
+    <File Name="../../../../../../../usr/include/libircclient/libirc_rfcnumeric.h"/>
+    <File Name="../../../../../../../usr/include/libircclient/libircclient.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="json">
+    <File Name="../../../../../../../usr/include/json-c/arraylist.h"/>
+    <File Name="../../../../../../../usr/include/json-c/bits.h"/>
+    <File Name="../../../../../../../usr/include/json-c/debug.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json_c_version.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json_config.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json_inttypes.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json_object.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json_object_iterator.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json_object_private.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json_tokener.h"/>
+    <File Name="../../../../../../../usr/include/json-c/json_util.h"/>
+    <File Name="../../../../../../../usr/include/json-c/linkhash.h"/>
+    <File Name="../../../../../../../usr/include/json-c/printbuf.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="Extras">
+    <File Name="configuration.json"/>
+    <File Name="Debug/irctest.log"/>
+  </VirtualDirectory>
 </CodeLite_Project>
