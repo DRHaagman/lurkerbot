@@ -1,3 +1,4 @@
+#include "main.h"
 #include "configurator.h"
 
 namespace TWDevNet {
@@ -15,7 +16,7 @@ namespace TWDevNet {
 		// Parse out the JSON and apply each server to an array of context structs.
 		json_object* config = json_object_from_file(filename);
 
-		addlog("%s", json_object_to_json_string(config));
+		TWDevNet::addlog("%s", json_object_to_json_string(config));
 
 		servers[0].server = (char*)"irc.freenode.net";
 		servers[0].port = 6667;
