@@ -7,9 +7,13 @@
 
 namespace TWDevNet {
 	class Session: public IRC {
+		private:
+
 		public:
 			Session();
 			~Session();
+
+			void SetContext(irc_ctx_t * ctx);
 	};
 }
 

@@ -39,8 +39,8 @@ int main (int argc, char **argv) {
 		return 1;
 	}
 
+	s.SetContext(&config.servers[0]);
 	addlog("%s", "Context set");
-	irc_set_ctx (s, &config.servers[0]);
 /*
 	// If the port number is specified in the server string, use the port 0 so it gets parsed
 	if ( strchr( argv[1], ':' ) != 0 )
@@ -58,17 +58,11 @@ int main (int argc, char **argv) {
 */
 	// Initiate the IRC server connection
 	addlog("%s%s", "Connecting to ", config.servers[0].server);
-	if ( irc_connect(s, config.servers[0].server, config.servers[0].port, config.servers[0].password, config.servers[0].nick, config.servers[0].username, config.servers[0].realname) ) {
-		addlog("Could not connect: %s", irc_strerror (irc_errno(s)));
-		return 1;
-	}
 	addlog("%s%s", "Connection made to ", config.servers[0].server);
 
 	// and run into forever loop, generating events
 	addlog("%s", "Running event pump...");
-	if ( irc_run (s) ) {
-		addlog("Could not connect or IO error: (%d) %s", irc_errno(s), irc_strerror (irc_errno(s)));
-	}
+	s.Run();
 
 	return 1;
 }

@@ -6,9 +6,10 @@
 #include "libircclient.h"
 
 namespace TWDevNet {
+
 	class IRC {
 		public:
-			irc_callbacks_t	callbacks;
+			irc_callbacks_t callbacks;
 			irc_session_t * s;
 
 		public:
@@ -24,12 +25,17 @@ namespace TWDevNet {
 			} irc_ctx_t;
 
 		public:
+			irc_ctx_t *ctx;
+
+		public:
 			IRC();
 			~IRC();
 
 		public:
 			irc_session_t * CreateSession(irc_callbacks_t * callbacks);
 			void DestroySession(irc_session_t * session);
+			int Connect();
+			int Run();
 			void dump_event(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count);
 			void notice_event(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count);
 			void event_join(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count);

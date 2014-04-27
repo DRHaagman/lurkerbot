@@ -36,6 +36,22 @@ namespace TWDevNet {
 	void IRC::DestroySession(irc_session_t * session) {
 		return irc_destroy_session(session);
 	}
+	int IRC::Connect() {
+		irc_ctx_t *lctx = this->ctx;
+		if ( irc_connect(s, lctx->server, lctx->port, lctx->password, lctx->nick, lctx->username, lctx->realname) ) {
+			addlog("Could not connect: %s", irc_strerror (irc_errno(s)));
+			return 1;
+		}
+		return 0;
+	}
+	int IRC::Run() {
+		if ( irc_run (s) ) {
+			addlog("Could not connect or IO error: (%d) %s", irc_errno(s), irc_strerror (irc_errno(s)));
+			return 1;
+		}
+		return 0;
+	}
+
 	void IRC::dump_event(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
 		char buf[512];
 		unsigned int cnt;
