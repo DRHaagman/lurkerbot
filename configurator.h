@@ -10,7 +10,7 @@
 namespace TWDevNet {
 	class Configurator {
 		public:
-			IRC::irc_ctx_t servers[255];
+			irc_ctx_t servers[255];
 
 		public:
 			Configurator();
