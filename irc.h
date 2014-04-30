@@ -9,7 +9,7 @@ namespace TWDevNet {
 	class IRC {
 		public:
 			irc_callbacks_t callbacks;
-			irc_session_t * s;
+			irc_session_t * sess;
 
 		public:
 			irc_ctx_t *ctx;

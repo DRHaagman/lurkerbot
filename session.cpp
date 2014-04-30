@@ -10,6 +10,6 @@ namespace TWDevNet {
 
 	void Session::SetContext(irc_ctx_t *ctx) {
 		this->ctx = ctx;
-		irc_set_ctx (s, ctx);
+		irc_set_ctx (this->sess, ctx);
 	}
 }

@@ -25,7 +25,7 @@ namespace TWDevNet {
 		callbacks.event_dcc_chat_req = irc_event_dcc_chat;
 		callbacks.event_dcc_send_req = irc_event_dcc_send;
 		addlog("%s", "Set up Callbacks complete");
-		s = irc_create_session (&callbacks);
+		this->sess = irc_create_session (&callbacks);
 		addlog("%s", "Session created");
 	}
 	IRC::~IRC() {
@@ -37,16 +37,16 @@ namespace TWDevNet {
 		return irc_destroy_session(session);
 	}
 	int IRC::Connect() {
-		irc_ctx_t *lctx = this->ctx;
-		if ( irc_connect(s, lctx->server, lctx->port, lctx->password, lctx->nick, lctx->username, lctx->realname) ) {
-			addlog("Could not connect: %s", irc_strerror (irc_errno(s)));
+//		irc_ctx_t *lctx = this->ctx;
+		if ( irc_connect(sess, ctx->server, ctx->port, ctx->password, ctx->nick, ctx->username, ctx->realname) ) {
+			addlog("Could not connect: %s", irc_strerror (irc_errno(this->sess)));
 			return 1;
 		}
 		return 0;
 	}
 	int IRC::Run() {
-		if ( irc_run (s) ) {
-			addlog("Could not connect or IO error: (%d) %s", irc_errno(s), irc_strerror (irc_errno(s)));
+		if ( irc_run (this->sess) ) {
+			addlog("Could not connect or IO error: (%d) %s", irc_errno(this->sess), irc_strerror (irc_errno(this->sess)));
 			return 1;
 		}
 		return 0;

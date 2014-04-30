@@ -24,7 +24,6 @@ namespace TWDevNet {
 		}
 	}
 
-
 	void dump_event(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
 		char buf[512];
 		unsigned int cnt;
@@ -199,7 +198,7 @@ int main (int argc, char **argv) {
 
 	Session s;
 
-	if ( !s.s ) {
+	if ( !s.sess ) {
 		addlog ("%s", "Could not create session\n");
 		return 1;
 	}
@@ -223,6 +222,7 @@ int main (int argc, char **argv) {
 */
 	// Initiate the IRC server connection
 	addlog("%s%s", "Connecting to ", config.servers[0].server);
+	s.Connect();
 	addlog("%s%s", "Connection made to ", config.servers[0].server);
 
 	// and run into forever loop, generating events
