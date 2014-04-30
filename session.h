@@ -14,6 +14,7 @@ namespace TWDevNet {
 			~Session();
 
 			void SetContext(irc_ctx_t * ctx);
+			irc_ctx_t GetContext();
 	};
 }
 
