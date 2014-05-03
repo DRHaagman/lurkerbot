@@ -1,37 +1,55 @@
 {
-	"name":"Lurker Bot,
-	"servers":[
-		"server":{
+	"name":"Lurker Bot",
+	"server":[
+		{
 			"name":"Freenode",
-			"Type":"Freenode",
+			"type":"Freenode",
 			"host":"irc.freenode.net",
 			"port":"6667",
 			"username":"lurkerbot",
-			"MyServerPassword":"",
+			"password":"MyServerPassword",
 			"nick":"_lurker_",
 			"identify":"MyNickPassword",
-			"channels":[
-				"channel":{
+			"channel":[
+				{
 					"name":"#twdev.bot",
-					"flags":"oV"
+					"flags":"oV",
+          "actiontrigger":"~",
+          "action":[
+            {
+              "name":"search",
+              "alias":"s",
+              "command":"http://www.google.com/search?q=",
+              "type":"http"
+            }
+					]
 				},
-				"channel":{
+				{
 					"name":"#batcave",
-					"flags":""
+					"flags":"",
+          "actiontrigger":"~",
+          "action":[
+            {
+              "name":"search",
+              "alias":"s",
+              "command":"http://www.google.com/search?q=",
+              "type":"http"
+            }
+					]
 				}
 			]
 		},
-		"server":{
+		{
 			"name":"T.W. Development",
 			"type":"ZNC Bouncer",
 			"host":"irc.twdev.net",
 			"port":"23998",
-			"username":"Talisman,
+			"username":"Talisman",
 			"password":"MyServerPassword",
 			"nick":"_lurker_",
 			"identify":"MyNickPassword",
-			"channels":[
-				"channel":{
+			"channel":[
+				{
 					"name":"*status"
 				}
 			]

@@ -18,7 +18,7 @@ namespace TWDevNet {
 			~Configurator();
 
 //		protected:
-			void ReadConfig(const char *filename);
+			int ReadConfig(const char *filename);
 	};
 }
 

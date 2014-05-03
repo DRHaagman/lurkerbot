@@ -31,7 +31,9 @@ int main (int argc, char **argv) {
 	Configurator config;
 
 	addlog("%s", "Starting");
-	config.ReadConfig("configuration.json");
+	int retval = config.ReadConfig("configuration.json");
+	if (retval)
+		return retval;
 	addlog("%s", "Read Config complete");
 
 	Session *s = new Session();
@@ -50,15 +52,17 @@ int main (int argc, char **argv) {
 */
 	s->SetContext(&config.servers[0]);
 	addlog("%s", "Context set");
-/*
+
 	// Initiate the IRC server connection
 	addlog("%s%s", "Connecting to ", s->GetContext().server);
-	s->Connect();
-	addlog("%s%s", "Connection made to ", s->GetContext().server);
+	if (s->Connect()) {
+		addlog("%s%s", "Connection made to ", s->GetContext().server);
 
-	// and run into forever loop, generating events
-	addlog("%s", "Running event pump...");
-	s->Run();
-*/
-	return 1;
+		// and run into forever loop, generating events
+		addlog("%s", "Running event pump...");
+		if (!s->Run()) {
+			return 1;
+		}
+	}
+	return 0;
 }

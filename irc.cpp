@@ -11,7 +11,7 @@ namespace TWDevNet {
 		strcat(command, "IDENTIFY ");
 		strcat(command, ctx->nickpass);
 		irc_cmd_msg(session, "nickserv", command);
-		irc_cmd_join (session, ctx->channel, 0);
+		irc_cmd_join (session, ctx->channels[0]->name, 0);
 	}
 
 	void event_dump(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
@@ -259,15 +259,15 @@ namespace TWDevNet {
 	int IRC::Connect() {
 		if ( irc_connect(sess, ctx->server, ctx->port, ctx->password, ctx->nick, ctx->username, ctx->realname) ) {
 			addlog("Could not connect: %s", irc_strerror (irc_errno(this->sess)));
-			return 1;
+			return false;
 		}
-		return 0;
+		return true;
 	}
 	int IRC::Run() {
 		if ( irc_run (this->sess) ) {
 			addlog("Could not connect or IO error: (%d) %s", irc_errno(this->sess), irc_strerror (irc_errno(this->sess)));
-			return 1;
+			return false;
 		}
-		return 0;
+		return true;
 	}
 }
