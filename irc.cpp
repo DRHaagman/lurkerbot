@@ -1,5 +1,6 @@
 #include "main.h"
 #include "irc.h"
+#include <string.h>
 
 namespace TWDevNet {
 //	void IRC::event_connect(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
@@ -7,27 +8,28 @@ namespace TWDevNet {
 		irc_ctx_t * ctx = (irc_ctx_t *) irc_get_ctx(session);
 		event_dump (session, event, origin, params, count);
 
-		char command[128];
-		strcat(command, "IDENTIFY ");
-		strcat(command, ctx->nickpass);
-		irc_cmd_msg(session, "nickserv", command);
-		irc_cmd_join (session, ctx->channels[0]->name, 0);
+		string command;
+		command = "IDENTIFY " + ctx->nickpass;
+		irc_cmd_msg(session, "nickserv", command.c_str());
+		irc_cmd_join (session, ctx->channels[0]->name.c_str(), 0);
 	}
 
 	void event_dump(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
-		char buf[512];
+		string buf;
 		unsigned int cnt;
 
-		buf[0] = '\0';
+		// buf[0] = '\0';
 
 		for ( cnt = 0; cnt < count; cnt++ ) {
 			if ( cnt )
-				strcat (buf, "|");
+				buf = buf + "|";
+//				strcat (buf, "|");
 
-			strcat (buf, params[cnt]);
+//			strcat (buf, params[cnt]);
+			buf = buf + params[cnt];
 		}
 
-		addlog ("Ev \"%s\", Or: \"%s\", Pa: %d [%s]", event, origin ? origin : "NULL", cnt, buf);
+		addlog ("Ev \"%s\", Or: \"%s\", Pa: %d [%s]", event, origin ? origin : "NULL", cnt, buf.c_str());
 	}
 
 	void event_notice(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
@@ -158,6 +160,22 @@ namespace TWDevNet {
 	//	event_dump (session, buf, origin, params, count);
 	}
 
+	void event_irc_dcc_chat(irc_session_t * session, const char * nick, const char * addr, irc_dcc_t dccid) {
+		printf ("DCC chat [%d] requested from '%s' (%s)\n", dccid, nick, addr);
+
+		irc_dcc_accept (session, dccid, 0, dcc_recv_callback);
+	}
+
+	void event_irc_dcc_send(irc_session_t * session, const char * nick, const char * addr, const char * filename, unsigned long size, irc_dcc_t dccid) {
+		FILE * fp;
+		printf ("DCC send [%d] requested from '%s' (%s): %s (%lu bytes)\n", dccid, nick, addr, filename, size);
+
+		if ( (fp = fopen ("file", "wb")) == 0 )
+			abort();
+
+		irc_dcc_accept (session, dccid, fp, dcc_file_recv_callback);
+	}
+
 	void dcc_recv_callback(irc_session_t * session, irc_dcc_t id, int status, void * ctx, const char * data, unsigned int length) {
 		static int count = 1;
 		char buf[12];
@@ -205,22 +223,6 @@ namespace TWDevNet {
 		}
 	}
 
-	void event_irc_dcc_chat(irc_session_t * session, const char * nick, const char * addr, irc_dcc_t dccid) {
-		printf ("DCC chat [%d] requested from '%s' (%s)\n", dccid, nick, addr);
-
-		irc_dcc_accept (session, dccid, 0, dcc_recv_callback);
-	}
-
-	void event_irc_dcc_send(irc_session_t * session, const char * nick, const char * addr, const char * filename, unsigned long size, irc_dcc_t dccid) {
-		FILE * fp;
-		printf ("DCC send [%d] requested from '%s' (%s): %s (%lu bytes)\n", dccid, nick, addr, filename, size);
-
-		if ( (fp = fopen ("file", "wb")) == 0 )
-			abort();
-
-		irc_dcc_accept (session, dccid, fp, dcc_file_recv_callback);
-	}
-
 	IRC::IRC() {
 		memset (&callbacks, 0, sizeof(callbacks));
 //		callbacks.event_connect = &IRC::event_connect;
@@ -257,7 +259,7 @@ namespace TWDevNet {
 		return irc_destroy_session(session);
 	}
 	int IRC::Connect() {
-		if ( irc_connect(sess, ctx->server, ctx->port, ctx->password, ctx->nick, ctx->username, ctx->realname) ) {
+		if ( irc_connect(sess, ctx->server.c_str(), ctx->port, ctx->password.c_str(), ctx->nick.c_str(), ctx->username.c_str(), ctx->realname.c_str()) ) {
 			addlog("Could not connect: %s", irc_strerror (irc_errno(this->sess)));
 			return false;
 		}

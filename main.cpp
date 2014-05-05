@@ -54,9 +54,9 @@ int main (int argc, char **argv) {
 	addlog("%s", "Context set");
 
 	// Initiate the IRC server connection
-	addlog("%s%s", "Connecting to ", s->GetContext().server);
+	addlog("%s%s", "Connecting to ", s->GetContext().server.c_str());
 	if (s->Connect()) {
-		addlog("%s%s", "Connection made to ", s->GetContext().server);
+		addlog("%s%s", "Connection made to ", s->GetContext().server.c_str());
 
 		// and run into forever loop, generating events
 		addlog("%s", "Running event pump...");

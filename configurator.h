@@ -18,6 +18,8 @@ namespace TWDevNet {
 			~Configurator();
 
 //		protected:
+			string FetchAndUnquoteJSElement(json_object *jsobject, string ElementName);
+			int FetchIntJSElement(json_object *jsobject, string ElementName);
 			int ReadConfig(const char *filename);
 	};
 }
