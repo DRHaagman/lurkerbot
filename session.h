@@ -15,6 +15,9 @@ namespace TWDevNet {
 
 			void SetContext(irc_ctx_t * ctx);
 			irc_ctx_t GetContext();
+
+		public: // Event Handlers
+			void EventChannel(irc_callback_params_t * Params);
 	};
 }
 

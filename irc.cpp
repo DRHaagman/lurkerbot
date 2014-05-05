@@ -1,6 +1,6 @@
+#include <string.h>
 #include "main.h"
 #include "irc.h"
-#include <string.h>
 
 namespace TWDevNet {
 //	void IRC::event_connect(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
@@ -11,24 +11,19 @@ namespace TWDevNet {
 		string command;
 		command = "IDENTIFY " + ctx->nickpass;
 		irc_cmd_msg(session, "nickserv", command.c_str());
-		irc_cmd_join (session, ctx->channels[0]->name.c_str(), 0);
+		for (int x = 0;x < ctx->channelcount;x++)
+			irc_cmd_join (session, ctx->channels[x]->name.c_str(), 0);
 	}
 
 	void event_dump(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
 		string buf;
 		unsigned int cnt;
 
-		// buf[0] = '\0';
-
 		for ( cnt = 0; cnt < count; cnt++ ) {
 			if ( cnt )
 				buf = buf + "|";
-//				strcat (buf, "|");
-
-//			strcat (buf, params[cnt]);
 			buf = buf + params[cnt];
 		}
-
 		addlog ("Ev \"%s\", Or: \"%s\", Pa: %d [%s]", event, origin ? origin : "NULL", cnt, buf.c_str());
 	}
 
@@ -87,15 +82,16 @@ namespace TWDevNet {
 	}
 
 	void event_privmsg(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
-		int result = 0;
 		event_dump (session, event, origin, params, count);
+		int result = 0;
+		string *command = new string(params[1]);
 
-		if ( !strcmp (params[1], "quit") )
-			irc_cmd_quit (session, "of course, Master!");
-		if ( strstr (params[1], "mode ") == params[1] )
-			irc_cmd_channel_mode (session, params[0], params[1] + 5);
-		if ( strstr (params[1], "nick ") == params[1] ) {
-			result = irc_cmd_nick (session, params[1] + 5);
+		if (command->compare("quit") == 0)
+			irc_cmd_quit(session, "of course, Master!");
+		if (command->find("mode ") != command->npos)
+			irc_cmd_channel_mode(session, params[0], command->substr(5).c_str());
+		if (command->find("nick ") != command->npos) {
+			result = irc_cmd_nick(session, command->substr(5).c_str());
 			switch(result) {
 				case LIBIRC_RFC_ERR_NONICKNAMEGIVEN:
 					irc_cmd_msg(session, origin, "Dumbass! Give me a nick to change to!");
@@ -104,40 +100,47 @@ namespace TWDevNet {
 					irc_cmd_msg(session, origin, "Erroneous Nick!");
 				break;
 				case LIBIRC_RFC_ERR_NICKNAMEINUSE:
+					// TODO: Do a ghost, release and nick
 					irc_cmd_msg(session, origin, "Nick in use!");
 				break;
 				case LIBIRC_RFC_ERR_NICKCOLLISION:
+					// TODO: Do a ghost, release and nick
 					irc_cmd_msg(session, origin, "Nick Collision!");
 				break;
 			}
 		}
-		if ( strstr (params[1], "whois ") == params[1] )
-			irc_cmd_whois (session, params[1] + 5);
-		if ( !strcmp (params[1], "help") )
-			irc_cmd_msg (session, params[0], "help, dcc chat, dcc send, ctcp");
-		if ( !strcmp (params[1], "topic") )
-			irc_cmd_topic (session, params[0], 0);
-		else if ( strstr (params[1], "topic ") == params[1] )
-			irc_cmd_topic (session, params[0], params[1] + 6);
-
-		printf ("'%s' said me (%s): %s\n", origin ? origin : "someone", params[0], params[1] );
+		if (command->find("whois ") != command->npos)
+			irc_cmd_whois(session, command->substr(5).c_str());
+		if (command->compare("help") == 0) { // TODO
+			// Loop through the actions for this session context and list them.
+			irc_cmd_msg(session, origin, "help");
+		}
+		else if (command->find("topic ") != command->npos) { // TODO
+			// find the action specified in the actions list and output the command
+		}
+		if (command->compare("topic") == 0)
+			irc_cmd_topic(session, params[0], 0);
+		else if (command->find("topic ") != command->npos)
+			irc_cmd_topic (session, params[0], command->substr(6).c_str());
 	}
 
 	void event_channel(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
+//		irc_ctx_t * ctx = (irc_ctx_t *) irc_get_ctx(session);
+//		s[ctx->sessionno].EventChannel();
 		char nickbuf[128];
 
-		if ( count != 2 )
-			return;
-
-		printf ("'%s' said in channel %s: %s\n", origin ? origin : "someone", params[0], params[1] );
-
-		if ( !origin )
+		if ((count != 2) || (!origin))
 			return;
 
 		irc_target_get_nick (origin, nickbuf, sizeof(nickbuf));
 
-		if ( !strcmp (params[1], "~help") )
-			irc_cmd_msg (session, params[0], "quit, help, dcc chat, dcc send, ctcp");
+		if ( !strcmp (params[1], "~help") ) {
+			// As in privmsg
+			irc_cmd_msg(session, params[0], "help");
+		}
+		else if ( strstr (params[1], "topic ") == params[1] ) { // TODO
+			// As in privmsg
+		}
 
 		if ( !strcmp (params[1], "~ctcp") ) {
 			irc_cmd_ctcp_request (session, nickbuf, "PING 223");
@@ -147,10 +150,9 @@ namespace TWDevNet {
 		}
 
 		if ( !strcmp (params[1], "topic") )
-			irc_cmd_topic (session, params[0], 0);
+			irc_cmd_topic(session, params[0], 0);
 		else if ( strstr (params[1], "topic ") == params[1] )
-			irc_cmd_topic (session, params[0], params[1] + 6);
-
+			irc_cmd_topic(session, params[0], params[1] + 6);
 	}
 
 	void event_numeric(irc_session_t * session, unsigned int event, const char * origin, const char ** params, unsigned int count) {

@@ -10,16 +10,19 @@
 namespace TWDevNet {
 	class Configurator {
 		public:
+			int servercount;
 			irc_ctx_t servers[255];
+			int valid;
 
 		public:
 			Configurator();
 			Configurator(const char *filename);
 			~Configurator();
 
-//		protected:
+		private:
 			string FetchAndUnquoteJSElement(json_object *jsobject, string ElementName);
 			int FetchIntJSElement(json_object *jsobject, string ElementName);
+		public:
 			int ReadConfig(const char *filename);
 	};
 }

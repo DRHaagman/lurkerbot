@@ -23,6 +23,7 @@ namespace TWDevNet {
 		string name;
 		string flags;
 		string actiontrigger;
+		int actioncount;
 		irc_chan_act_t *actions[255];
 	} irc_chan_t;
 
@@ -36,8 +37,18 @@ namespace TWDevNet {
 		string password;
 		string nick;
 		string nickpass;
+		int channelcount;
 		irc_chan_t *channels[255];
+		int sessionno;
 	} irc_ctx_t;
+
+	typedef struct {
+		irc_session_t * session;
+		const char * event;
+		const char * origin;
+		const char ** params;
+		unsigned int count;
+	} irc_callback_params_t;
 
 	void addlog(const char * fmt, ...);
 }

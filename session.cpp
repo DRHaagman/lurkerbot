@@ -17,4 +17,7 @@ namespace TWDevNet {
 	irc_ctx_t Session::GetContext() {
 		return *this->ctx;
 	}
+
+	void Session::EventChannel(irc_callback_params_t * Params) {
+	}
 }

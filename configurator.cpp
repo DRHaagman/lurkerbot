@@ -6,10 +6,12 @@ using namespace std;
 
 namespace TWDevNet {
 	Configurator::Configurator() {
+		servercount = 0;
+		valid = false;
 	}
 	Configurator::Configurator(const char *filename) {
 		Configurator();
-		this->ReadConfig(filename);
+		valid = ReadConfig(filename);
 	}
 	Configurator::~Configurator() {
 	}
@@ -33,11 +35,11 @@ namespace TWDevNet {
 		addlog("Parsing the configuration file");
 		if (!jsonconfig) {
 			addlog("Configuration JSON format invalid.");
-			return 1;
+			return false;
 		}
 		else {
 			addlog("Configuration JSON format valid.");
-			TWDevNet::addlog("%s", (char*)json_object_to_json_string_ext(jsonconfig, JSON_C_TO_STRING_PRETTY));
+//			addlog("%s", (char*)json_object_to_json_string_ext(jsonconfig, JSON_C_TO_STRING_PRETTY));
 			addlog("%d elements", json_object_object_length(jsonconfig));
 
 			json_object *jsonbotname;
@@ -54,7 +56,9 @@ namespace TWDevNet {
 			json_object_object_get_ex(jsonconfig, "servers", &jsonservers);
 			const int ServerCount = json_object_array_length(jsonservers);
 			addlog("Server Array Length: %d", ServerCount);
+			this->servercount = ServerCount;
 			for (int x = 0;x < ServerCount;x++) {
+				servers[x].sessionno = x;
 				servers[x].realname = strTemp.c_str(); //substr(botname, 1, strlen(botname)-2);
 				jsonserver = json_object_array_get_idx(jsonservers, x);
 				servers[x].name = FetchAndUnquoteJSElement(jsonserver, "name");
@@ -68,6 +72,7 @@ namespace TWDevNet {
 
 				if (json_object_object_get_ex(jsonserver, "channels", &jschannels)) {
 					int ChannelCount = json_object_array_length(jschannels);
+					servers[x].channelcount = ChannelCount;
 					addlog("Server Channels Array Length: %d", ChannelCount);
 					for (int y = 0;y < ChannelCount;y++) {
 						irc_chan_t *channel = new irc_chan_t;
@@ -79,6 +84,7 @@ namespace TWDevNet {
 
 						if (json_object_object_get_ex(jschannel, "actions", &jsactions)) {
 							int ActionCount = json_object_array_length(jsactions);
+							servers[x].channels[y]->actioncount = ActionCount;
 							addlog("Server Channel Actions Array Length: %d", ActionCount);
 							for (int z = 0;z < ActionCount;z++) {
 								irc_chan_act_t *action = new irc_chan_act_t;
@@ -94,6 +100,6 @@ namespace TWDevNet {
 				}
 			}
 		}
-		return 0;
+		return true;
 	}
 }

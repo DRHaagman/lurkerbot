@@ -28,41 +28,49 @@ namespace TWDevNet {
 using namespace TWDevNet;
 
 int main (int argc, char **argv) {
-	Configurator config;
+	Session *s[255];
+	addlog("Starting");
+	Configurator *config = new Configurator("configuration.json");
+//	int retval = config.ReadConfig("configuration.json");
+	if (!config->valid)
+		return (!config->valid);
+	addlog("Read Config complete");
 
-	addlog("%s", "Starting");
-	int retval = config.ReadConfig("configuration.json");
-	if (retval)
-		return retval;
-	addlog("%s", "Read Config complete");
+	for (int x = 0;x < config->servercount;x++) {
+		// TODO: thread the loop so that s[x]->Run() will execute for every server.
+		Session *tmpS = new Session;
+		s[x] = tmpS;
 
-	Session *s = new Session();
-
-	if ( !s->sess ) {
-		addlog ("%s", "Could not create session\n");
-		return 1;
-	}
-/*
-	// To handle the "SSL certificate verify failed" from command line we allow passing ## in front
-	// of the server name, and in this case tell libircclient not to verify the cert
-	if ( config.servers[0][0] == '#' && config.servers[0][1] == '#' ) {
-		// Skip the first character as libircclient needs only one # for SSL support, i.e. #irc.freenode.net
-		irc_option_set( config, LIBIRC_OPTION_SSL_NO_VERIFY );
-	}
-*/
-	s->SetContext(&config.servers[0]);
-	addlog("%s", "Context set");
-
-	// Initiate the IRC server connection
-	addlog("%s%s", "Connecting to ", s->GetContext().server.c_str());
-	if (s->Connect()) {
-		addlog("%s%s", "Connection made to ", s->GetContext().server.c_str());
-
-		// and run into forever loop, generating events
-		addlog("%s", "Running event pump...");
-		if (!s->Run()) {
+		if ( !s[x]->sess ) {
+			addlog ("Could not create session\n");
 			return 1;
 		}
+/*
+		// To handle the "SSL certificate verify failed" from command line we allow passing ## in front
+		// of the server name, and in this case tell libircclient not to verify the cert
+		if ( config.servers[0][0] == '#' && config.servers[0][1] == '#' ) {
+			// Skip the first character as libircclient needs only one # for SSL support, i.e. #irc.freenode.net
+			irc_option_set( config, LIBIRC_OPTION_SSL_NO_VERIFY );
+		}
+*/
+		s[x]->SetContext(&config->servers[0]);
+		addlog("Context set");
+
+		// Initiate the IRC server connection
+		addlog("Connecting to %s", s[x]->GetContext().server.c_str());
+		if (s[x]->Connect()) {
+			addlog("Connection made to %s", s[x]->GetContext().server.c_str());
+
+			// and run into forever loop, generating events
+			addlog("Running event pump...");
+			if (!s[x]->Run()) {
+				addlog("Teminated");
+				return 1;
+			}
+		}
+		else
+			addlog("Connection failed");
 	}
+	addlog("Concluded");
 	return 0;
 }
