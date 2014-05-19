@@ -42,9 +42,11 @@ namespace TWDevNet {
 			IRC();
 			~IRC();
 
-		public:
+		protected:
 			irc_session_t * CreateSession(irc_callbacks_t * callbacks);
 			void DestroySession(irc_session_t * session);
+
+		public:
 			int Connect();
 			int Run();
 	};

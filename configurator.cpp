@@ -16,7 +16,7 @@ namespace TWDevNet {
 	Configurator::~Configurator() {
 	}
 
-	string Configurator::FetchAndUnquoteJSElement(json_object *jsobject, string ElementName) {
+	string Configurator::FetchQuotedJSElement(json_object *jsobject, string ElementName) {
 		json_object *jsonTemp;
 		json_object_object_get_ex(jsobject, ElementName.c_str(), &jsonTemp);
 		string strTemp = json_object_to_json_string(jsonTemp);
@@ -26,6 +26,11 @@ namespace TWDevNet {
 		json_object *jsonTemp;
 		json_object_object_get_ex(jsobject, ElementName.c_str(), &jsonTemp);
 		return json_object_get_int(jsonTemp);
+	}
+	int Configurator::FetchBoolJSElement(json_object *jsobject, string ElementName) {
+		json_object *jsonTemp;
+		json_object_object_get_ex(jsobject, ElementName.c_str(), &jsonTemp);
+		return json_object_get_boolean(jsonTemp);
 	}
 	int Configurator::ReadConfig(const char *filename) {
 		string strTemp;
@@ -44,7 +49,7 @@ namespace TWDevNet {
 
 			json_object *jsonbotname;
 			if (json_object_object_get_ex(jsonconfig, "name", &jsonbotname)) {
-				strTemp = FetchAndUnquoteJSElement(jsonconfig, "name");
+				strTemp = FetchQuotedJSElement(jsonconfig, "name");
 				addlog("Bot Name: %s", strTemp.c_str());
 			}
 			json_object *jsonservers;
@@ -59,16 +64,16 @@ namespace TWDevNet {
 			this->servercount = ServerCount;
 			for (int x = 0;x < ServerCount;x++) {
 				servers[x].sessionno = x;
-				servers[x].realname = strTemp.c_str(); //substr(botname, 1, strlen(botname)-2);
+				servers[x].realname = strTemp.c_str();
 				jsonserver = json_object_array_get_idx(jsonservers, x);
-				servers[x].name = FetchAndUnquoteJSElement(jsonserver, "name");
-				servers[x].type = FetchAndUnquoteJSElement(jsonserver, "type");
-				servers[x].server = FetchAndUnquoteJSElement(jsonserver, "host");
+				servers[x].name = FetchQuotedJSElement(jsonserver, "name");
+				servers[x].type = FetchQuotedJSElement(jsonserver, "type");
+				servers[x].server = FetchQuotedJSElement(jsonserver, "host");
 				servers[x].port = FetchIntJSElement(jsonserver, "port");
-				servers[x].username = FetchAndUnquoteJSElement(jsonserver, "username");
-				servers[x].password = FetchAndUnquoteJSElement(jsonserver, "password");
-				servers[x].nick = FetchAndUnquoteJSElement(jsonserver, "nick");
-				servers[x].nickpass = FetchAndUnquoteJSElement(jsonserver, "identify");
+				servers[x].username = FetchQuotedJSElement(jsonserver, "username");
+				servers[x].password = FetchQuotedJSElement(jsonserver, "password");
+				servers[x].nick = FetchQuotedJSElement(jsonserver, "nick");
+				servers[x].nickpass = FetchQuotedJSElement(jsonserver, "identify");
 
 				if (json_object_object_get_ex(jsonserver, "channels", &jschannels)) {
 					int ChannelCount = json_object_array_length(jschannels);
@@ -78,9 +83,9 @@ namespace TWDevNet {
 						irc_chan_t *channel = new irc_chan_t;
 						servers[x].channels[y] = channel;
 						jschannel = json_object_array_get_idx(jschannels, y);
-						servers[x].channels[y]->name = FetchAndUnquoteJSElement(jschannel, "name");
-						servers[x].channels[y]->flags = FetchAndUnquoteJSElement(jschannel, "flags");
-						servers[x].channels[y]->actiontrigger = FetchAndUnquoteJSElement(jschannel, "actiontrigger");
+						servers[x].channels[y]->name = FetchQuotedJSElement(jschannel, "name");
+						servers[x].channels[y]->flags = FetchQuotedJSElement(jschannel, "flags");
+						servers[x].channels[y]->actiontrigger = FetchQuotedJSElement(jschannel, "actiontrigger");
 
 						if (json_object_object_get_ex(jschannel, "actions", &jsactions)) {
 							int ActionCount = json_object_array_length(jsactions);
@@ -90,10 +95,13 @@ namespace TWDevNet {
 								irc_chan_act_t *action = new irc_chan_act_t;
 								servers[x].channels[y]->actions[z] = action;
 								jsaction = json_object_array_get_idx(jsactions, z);
-								servers[x].channels[y]->actions[z]->name = FetchAndUnquoteJSElement(jsaction, "name");
-								servers[x].channels[y]->actions[z]->alias = FetchAndUnquoteJSElement(jsaction, "alias");
-								servers[x].channels[y]->actions[z]->command = FetchAndUnquoteJSElement(jsaction, "command");
-								servers[x].channels[y]->actions[z]->type = FetchAndUnquoteJSElement(jsaction, "type");
+								servers[x].channels[y]->actions[z]->name = FetchQuotedJSElement(jsaction, "name");
+								servers[x].channels[y]->actions[z]->aliases = FetchQuotedJSElement(jsaction, "aliases");
+								servers[x].channels[y]->actions[z]->action = FetchQuotedJSElement(jsaction, "action");
+								servers[x].channels[y]->actions[z]->command = FetchQuotedJSElement(jsaction, "command");
+								servers[x].channels[y]->actions[z]->channelaware = FetchIntJSElement(jsaction, "channelaware");
+								servers[x].channels[y]->actions[z]->type = FetchQuotedJSElement(jsaction, "type");
+								servers[x].channels[y]->actions[z]->help = FetchQuotedJSElement(jsaction, "help");
 							}
 						}
 					}

@@ -11,6 +11,7 @@ namespace TWDevNet {
 
 		public:
 			Session();
+			Session(irc_ctx_t * ctx);
 			~Session();
 
 			void SetContext(irc_ctx_t * ctx);
@@ -18,6 +19,7 @@ namespace TWDevNet {
 
 		public: // Event Handlers
 			void EventChannel(irc_callback_params_t * Params);
+			int FindChannelIdx(string Channel);
 	};
 }
 

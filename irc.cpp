@@ -1,6 +1,7 @@
 #include <string.h>
 #include "main.h"
 #include "irc.h"
+#include "session.h"
 
 namespace TWDevNet {
 //	void IRC::event_connect(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
@@ -115,7 +116,7 @@ namespace TWDevNet {
 			// Loop through the actions for this session context and list them.
 			irc_cmd_msg(session, origin, "help");
 		}
-		else if (command->find("topic ") != command->npos) { // TODO
+		else if (command->find("help ") != command->npos) { // TODO
 			// find the action specified in the actions list and output the command
 		}
 		if (command->compare("topic") == 0)
@@ -125,20 +126,37 @@ namespace TWDevNet {
 	}
 
 	void event_channel(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
-//		irc_ctx_t * ctx = (irc_ctx_t *) irc_get_ctx(session);
-//		s[ctx->sessionno].EventChannel();
+
+		irc_ctx_t * ctx = (irc_ctx_t *) irc_get_ctx(session);
 		char nickbuf[128];
 
 		if ((count != 2) || (!origin))
 			return;
 
+		// Determine if the bot is addressed directly - if so, ignore the requirement for the trigger to fire the command.
 		irc_target_get_nick (origin, nickbuf, sizeof(nickbuf));
 
-		if ( !strcmp (params[1], "~help") ) {
-			// As in privmsg
-			irc_cmd_msg(session, params[0], "help");
+		string actions = "";
+		// Determine which channel we're in.
+		string *channel = new string(params[0]);
+		int chanidx = 0;
+		for (chanidx = 0;chanidx < ctx->channelcount;chanidx++) {
+			if (ctx->channels[chanidx]->name.compare(*channel))
+				break;
 		}
-		else if ( strstr (params[1], "topic ") == params[1] ) { // TODO
+		// Determine the channel's trigger
+		// Determine if the event is a command trigger
+		// Determine which command to fire
+		if ( !strcmp (params[1], "~help") ) {
+			for (int x = 0;x < ctx->channels[chanidx]->actioncount;x++) {
+				if (x == 0)
+					actions = ctx->channels[chanidx]->actions[x]->name;
+				else
+					actions = actions + ", " + ctx->channels[chanidx]->actions[x]->name;
+			}
+			irc_cmd_msg(session, params[0], actions.c_str());
+		}
+		else if ( strstr (params[1], "~help ") == params[1] ) { // TODO
 			// As in privmsg
 		}
 

@@ -3,6 +3,8 @@
 #include "session.h"
 
 namespace TWDevNet {
+	Session *s[255];
+
 	void addlog(const char * fmt, ...) {
 		FILE * fp;
 		char buf[1024];
@@ -28,49 +30,47 @@ namespace TWDevNet {
 using namespace TWDevNet;
 
 int main (int argc, char **argv) {
-	Session *s[255];
+	string servername;
+
 	addlog("Starting");
 	Configurator *config = new Configurator("configuration.json");
-//	int retval = config.ReadConfig("configuration.json");
 	if (!config->valid)
 		return (!config->valid);
 	addlog("Read Config complete");
 
 	for (int x = 0;x < config->servercount;x++) {
 		// TODO: thread the loop so that s[x]->Run() will execute for every server.
-		Session *tmpS = new Session;
+		servername = config->servers[x].name;
+		Session *tmpS = new Session(&config->servers[x]);
 		s[x] = tmpS;
-
 		if ( !s[x]->sess ) {
-			addlog ("Could not create session\n");
+			addlog ("Could not create session for server %s\n", servername.c_str());
 			return 1;
 		}
-/*
+		else
+			addlog("Session created with context set");
 		// To handle the "SSL certificate verify failed" from command line we allow passing ## in front
 		// of the server name, and in this case tell libircclient not to verify the cert
-		if ( config.servers[0][0] == '#' && config.servers[0][1] == '#' ) {
+		if (servername.c_str()[0] == '#' && servername.c_str()[1] == '#' ) {
 			// Skip the first character as libircclient needs only one # for SSL support, i.e. #irc.freenode.net
-			irc_option_set( config, LIBIRC_OPTION_SSL_NO_VERIFY );
+			irc_option_set(s[x]->sess, LIBIRC_OPTION_SSL_NO_VERIFY );
 		}
-*/
-		s[x]->SetContext(&config->servers[0]);
-		addlog("Context set");
 
 		// Initiate the IRC server connection
-		addlog("Connecting to %s", s[x]->GetContext().server.c_str());
+		addlog("Connecting to %s", servername.c_str());
 		if (s[x]->Connect()) {
-			addlog("Connection made to %s", s[x]->GetContext().server.c_str());
+			addlog("Connection made to %s", servername.c_str());
 
 			// and run into forever loop, generating events
-			addlog("Running event pump...");
+			addlog("Running event pump for %s", servername.c_str());
 			if (!s[x]->Run()) {
-				addlog("Teminated");
+				addlog("Teminated %s", servername.c_str());
 				return 1;
 			}
 		}
 		else
-			addlog("Connection failed");
+			addlog("Connection failed for %s", servername.c_str());
 	}
-	addlog("Concluded");
+	addlog("Concluded for %s", servername.c_str());
 	return 0;
 }

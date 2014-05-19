@@ -5,6 +5,9 @@
 namespace TWDevNet {
 	Session::Session() {
 	}
+	Session::Session(irc_ctx_t *ctx) {
+		SetContext(ctx);
+	}
 	Session::~Session() {
 	}
 
@@ -17,7 +20,17 @@ namespace TWDevNet {
 	irc_ctx_t Session::GetContext() {
 		return *this->ctx;
 	}
+	int Session::FindChannelIdx(string Channel) {
+		irc_ctx_t ctx = *this->ctx;  // Get a local COPY of the context.
+		// Loop through the context channels to find the specified one and return it's index.
+		for (int x = 0;x < ctx.channelcount;x++) {
+			if (ctx.channels[x]->name == Channel)
+				return x;
+		}
+		return -1;
+	}
 
 	void Session::EventChannel(irc_callback_params_t * Params) {
+
 	}
 }

@@ -20,8 +20,9 @@ namespace TWDevNet {
 			~Configurator();
 
 		private:
-			string FetchAndUnquoteJSElement(json_object *jsobject, string ElementName);
+			string FetchQuotedJSElement(json_object *jsobject, string ElementName);
 			int FetchIntJSElement(json_object *jsobject, string ElementName);
+			int FetchBoolJSElement(json_object *jsobject, string ElementName);
 		public:
 			int ReadConfig(const char *filename);
 	};
