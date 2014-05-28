@@ -11,7 +11,7 @@ namespace TWDevNet {
 	class Configurator {
 		public:
 			int servercount;
-			irc_ctx_t servers[255];
+			vector<irc_ctx_t *> servers;
 			int valid;
 
 		public:

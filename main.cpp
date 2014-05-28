@@ -3,7 +3,7 @@
 #include "session.h"
 
 namespace TWDevNet {
-	Session *s[255];
+	vector<Session *> s;
 
 	void addlog(const char * fmt, ...) {
 		FILE * fp;
@@ -40,9 +40,9 @@ int main (int argc, char **argv) {
 
 	for (int x = 0;x < config->servercount;x++) {
 		// TODO: thread the loop so that s[x]->Run() will execute for every server.
-		servername = config->servers[x].name;
-		Session *tmpS = new Session(&config->servers[x]);
-		s[x] = tmpS;
+		servername = config->servers[x]->name;
+		Session *tmpS = new Session(config->servers[x]);
+		s.push_back(tmpS);
 		if ( !s[x]->sess ) {
 			addlog ("Could not create session for server %s\n", servername.c_str());
 			return 1;

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string>
+#include <vector>
 #include <stdlib.h>
 
 #include "libircclient.h"
@@ -27,7 +28,7 @@ namespace TWDevNet {
 		string flags;                 // Nick flags for the channel.
 		string actiontrigger;         // Trigger character to parse for the actions.
 		int actioncount;              // Number of actions defined.
-		irc_chan_act_t *actions[255]; // Pointer to the array of actions.
+		vector<irc_chan_act_t *> actions; // Pointer to the array of actions.
 	} irc_chan_t;
 
 	typedef struct {
@@ -40,9 +41,9 @@ namespace TWDevNet {
 		string password;              // Server user account password
 		string nick;                  // Nickname
 		string nickpass;              // Password for authentication to services.
-		irc_chan_act_t *actions[255]; // Pointer to the array of actions - These are independant of channels.
+		vector<irc_chan_act_t *> actions; // Pointer to the array of actions - These are independant of channels.
 		int channelcount;             // Number of channels defined
-		irc_chan_t *channels[255];    // Pointer to the array of channels.
+		vector<irc_chan_t *> channels;    // Pointer to the array of channels.
 		int sessionno;
 	} irc_ctx_t;
 

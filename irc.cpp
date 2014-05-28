@@ -133,7 +133,7 @@ namespace TWDevNet {
 		if ((count != 2) || (!origin))
 			return;
 
-		// Determine if the bot is addressed directly - if so, ignore the requirement for the trigger to fire the command.
+		// Determine who is talking.
 		irc_target_get_nick (origin, nickbuf, sizeof(nickbuf));
 
 		string actions = "";
@@ -145,6 +145,9 @@ namespace TWDevNet {
 				break;
 		}
 		// Determine the channel's trigger
+		string trigger = ctx->channels[chanidx]->actiontrigger;
+
+		// (TODO) Determine if the bot is addressed directly - if so, ignore the requirement for the trigger to fire the command.
 		// Determine if the event is a command trigger
 		// Determine which command to fire
 		if ( !strcmp (params[1], "~help") ) {

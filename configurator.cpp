@@ -63,49 +63,51 @@ namespace TWDevNet {
 			addlog("Server Array Length: %d", ServerCount);
 			this->servercount = ServerCount;
 			for (int x = 0;x < ServerCount;x++) {
-				servers[x].sessionno = x;
-				servers[x].realname = strTemp.c_str();
+				irc_ctx_t * tmpServer = new irc_ctx_t;
+				tmpServer->sessionno = x;
+				tmpServer->realname = strTemp.c_str();
 				jsonserver = json_object_array_get_idx(jsonservers, x);
-				servers[x].name = FetchQuotedJSElement(jsonserver, "name");
-				servers[x].type = FetchQuotedJSElement(jsonserver, "type");
-				servers[x].server = FetchQuotedJSElement(jsonserver, "host");
-				servers[x].port = FetchIntJSElement(jsonserver, "port");
-				servers[x].username = FetchQuotedJSElement(jsonserver, "username");
-				servers[x].password = FetchQuotedJSElement(jsonserver, "password");
-				servers[x].nick = FetchQuotedJSElement(jsonserver, "nick");
-				servers[x].nickpass = FetchQuotedJSElement(jsonserver, "identify");
+				tmpServer->name = FetchQuotedJSElement(jsonserver, "name");
+				tmpServer->type = FetchQuotedJSElement(jsonserver, "type");
+				tmpServer->server = FetchQuotedJSElement(jsonserver, "host");
+				tmpServer->port = FetchIntJSElement(jsonserver, "port");
+				tmpServer->username = FetchQuotedJSElement(jsonserver, "username");
+				tmpServer->password = FetchQuotedJSElement(jsonserver, "password");
+				tmpServer->nick = FetchQuotedJSElement(jsonserver, "nick");
+				tmpServer->nickpass = FetchQuotedJSElement(jsonserver, "identify");
 
 				if (json_object_object_get_ex(jsonserver, "channels", &jschannels)) {
 					int ChannelCount = json_object_array_length(jschannels);
-					servers[x].channelcount = ChannelCount;
+					tmpServer->channelcount = ChannelCount;
 					addlog("Server Channels Array Length: %d", ChannelCount);
 					for (int y = 0;y < ChannelCount;y++) {
 						irc_chan_t *channel = new irc_chan_t;
-						servers[x].channels[y] = channel;
 						jschannel = json_object_array_get_idx(jschannels, y);
-						servers[x].channels[y]->name = FetchQuotedJSElement(jschannel, "name");
-						servers[x].channels[y]->flags = FetchQuotedJSElement(jschannel, "flags");
-						servers[x].channels[y]->actiontrigger = FetchQuotedJSElement(jschannel, "actiontrigger");
+						channel->name = FetchQuotedJSElement(jschannel, "name");
+						channel->flags = FetchQuotedJSElement(jschannel, "flags");
+						channel->actiontrigger = FetchQuotedJSElement(jschannel, "actiontrigger");
 
 						if (json_object_object_get_ex(jschannel, "actions", &jsactions)) {
 							int ActionCount = json_object_array_length(jsactions);
-							servers[x].channels[y]->actioncount = ActionCount;
+							channel->actioncount = ActionCount;
 							addlog("Server Channel Actions Array Length: %d", ActionCount);
 							for (int z = 0;z < ActionCount;z++) {
 								irc_chan_act_t *action = new irc_chan_act_t;
-								servers[x].channels[y]->actions[z] = action;
 								jsaction = json_object_array_get_idx(jsactions, z);
-								servers[x].channels[y]->actions[z]->name = FetchQuotedJSElement(jsaction, "name");
-								servers[x].channels[y]->actions[z]->aliases = FetchQuotedJSElement(jsaction, "aliases");
-								servers[x].channels[y]->actions[z]->action = FetchQuotedJSElement(jsaction, "action");
-								servers[x].channels[y]->actions[z]->command = FetchQuotedJSElement(jsaction, "command");
-								servers[x].channels[y]->actions[z]->channelaware = FetchIntJSElement(jsaction, "channelaware");
-								servers[x].channels[y]->actions[z]->type = FetchQuotedJSElement(jsaction, "type");
-								servers[x].channels[y]->actions[z]->help = FetchQuotedJSElement(jsaction, "help");
+								action->name = FetchQuotedJSElement(jsaction, "name");
+								action->aliases = FetchQuotedJSElement(jsaction, "aliases");
+								action->action = FetchQuotedJSElement(jsaction, "action");
+								action->command = FetchQuotedJSElement(jsaction, "command");
+								action->channelaware = FetchIntJSElement(jsaction, "channelaware");
+								action->type = FetchQuotedJSElement(jsaction, "type");
+								action->help = FetchQuotedJSElement(jsaction, "help");
+								channel->actions.push_back(action);
 							}
 						}
+						tmpServer->channels.push_back(channel);
 					}
 				}
+				servers.push_back(tmpServer);
 			}
 		}
 		return true;
