@@ -42,7 +42,7 @@ int main (int argc, char **argv) {
 		// TODO: thread the loop so that s[x]->Run() will execute for every server.
 		servername = config->servers[x]->name;
 		Session *tmpS = new Session(config->servers[x]);
-		s.push_back(tmpS);
+	s.push_back(tmpS);
 		if ( !s[x]->sess ) {
 			addlog ("Could not create session for server %s\n", servername.c_str());
 			return 1;
@@ -58,6 +58,7 @@ int main (int argc, char **argv) {
 
 		// Initiate the IRC server connection
 		addlog("Connecting to %s", servername.c_str());
+		// Failure to conenct, at present (08/25) is due to the context of s[x] being null.
 		if (s[x]->Connect()) {
 			addlog("Connection made to %s", servername.c_str());
 

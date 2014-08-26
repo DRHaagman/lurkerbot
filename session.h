@@ -8,17 +8,17 @@
 namespace TWDevNet {
 	class Session: public IRC {
 		private:
+			void SetContext(irc_ctx_t * ctx);
 
 		public:
-			Session();
+//			Session();
 			Session(irc_ctx_t * ctx);
 			~Session();
 
-			void SetContext(irc_ctx_t * ctx);
 			irc_ctx_t GetContext();
 
 		public: // Event Handlers
-			void EventChannel(irc_callback_params_t * Params);
+//			void EventChannel(irc_callback_params_t * Params);
 			int FindChannelIdx(string Channel);
 	};
 }

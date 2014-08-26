@@ -87,8 +87,10 @@ namespace TWDevNet {
 		int result = 0;
 		string *command = new string(params[1]);
 
-		if (command->compare("quit") == 0)
-			irc_cmd_quit(session, "of course, Master!");
+		if (command->compare("quit") == 0) {
+			// TODO: Determine if the commander is authorised
+			irc_cmd_quit(session, "Of course, Master!");
+		}
 		if (command->find("mode ") != command->npos)
 			irc_cmd_channel_mode(session, params[0], command->substr(5).c_str());
 		if (command->find("nick ") != command->npos) {
@@ -117,7 +119,7 @@ namespace TWDevNet {
 			irc_cmd_msg(session, origin, "help");
 		}
 		else if (command->find("help ") != command->npos) { // TODO
-			// find the action specified in the actions list and output the command
+			// Find the action specified in the actions list and output the command
 		}
 		if (command->compare("topic") == 0)
 			irc_cmd_topic(session, params[0], 0);
@@ -126,15 +128,13 @@ namespace TWDevNet {
 	}
 
 	void event_channel(irc_session_t * session, const char * event, const char * origin, const char ** params, unsigned int count) {
-
 		irc_ctx_t * ctx = (irc_ctx_t *) irc_get_ctx(session);
 		char nickbuf[128];
 
 		if ((count != 2) || (!origin))
 			return;
 
-		// Determine who is talking.
-		irc_target_get_nick (origin, nickbuf, sizeof(nickbuf));
+		irc_target_get_nick (origin, nickbuf, sizeof(nickbuf)); // Determine who is talking.
 
 		string actions = "";
 		// Determine which channel we're in.
@@ -144,8 +144,8 @@ namespace TWDevNet {
 			if (ctx->channels[chanidx]->name.compare(*channel))
 				break;
 		}
-		// Determine the channel's trigger
-		string trigger = ctx->channels[chanidx]->actiontrigger;
+
+		string trigger = ctx->channels[chanidx]->actiontrigger; // Determine the channel's trigger
 
 		// (TODO) Determine if the bot is addressed directly - if so, ignore the requirement for the trigger to fire the command.
 		// Determine if the event is a command trigger
@@ -248,7 +248,6 @@ namespace TWDevNet {
 
 	IRC::IRC() {
 		memset (&callbacks, 0, sizeof(callbacks));
-//		callbacks.event_connect = &IRC::event_connect;
 		callbacks.event_connect = event_connect;
 		callbacks.event_join = event_join;
 		callbacks.event_nick = event_nick;
@@ -282,7 +281,7 @@ namespace TWDevNet {
 		return irc_destroy_session(session);
 	}
 	int IRC::Connect() {
-		if ( irc_connect(sess, ctx->server.c_str(), ctx->port, ctx->password.c_str(), ctx->nick.c_str(), ctx->username.c_str(), ctx->realname.c_str()) ) {
+	if ( irc_connect(sess, ctx->server.c_str(), ctx->port, ctx->password.c_str(), ctx->nick.c_str(), ctx->username.c_str(), ctx->realname.c_str()) ) {
 			addlog("Could not connect: %s", irc_strerror (irc_errno(this->sess)));
 			return false;
 		}
@@ -290,8 +289,12 @@ namespace TWDevNet {
 	}
 	int IRC::Run() {
 		if ( irc_run (this->sess) ) {
-			addlog("Could not connect or IO error: (%d) %s", irc_errno(this->sess), irc_strerror (irc_errno(this->sess)));
-			return false;
+			if (irc_errno(this->sess) == 0) {
+				if ( irc_run (this->sess) ) {
+					addlog("Could not connect or IO error: (%d) %s", irc_errno(this->sess), irc_strerror (irc_errno(this->sess)));
+					return false;
+				}
+			}
 		}
 		return true;
 	}

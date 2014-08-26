@@ -44,7 +44,6 @@ namespace TWDevNet {
 		}
 		else {
 			addlog("Configuration JSON format valid.");
-//			addlog("%s", (char*)json_object_to_json_string_ext(jsonconfig, JSON_C_TO_STRING_PRETTY));
 			addlog("%d elements", json_object_object_length(jsonconfig));
 
 			json_object *jsonbotname;

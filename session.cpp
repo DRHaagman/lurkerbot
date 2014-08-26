@@ -3,10 +3,10 @@
 #include <stdarg.h>
 
 namespace TWDevNet {
-	Session::Session() {
-	}
+//	Session::Session() {
+//	}
 	Session::Session(irc_ctx_t *ctx) {
-		SetContext(ctx);
+		this->SetContext(ctx);
 	}
 	Session::~Session() {
 	}
@@ -29,8 +29,8 @@ namespace TWDevNet {
 		}
 		return -1;
 	}
+//	void Session::EventChannel(irc_callback_params_t * Params) {
+//
+//	}
 
-	void Session::EventChannel(irc_callback_params_t * Params) {
-
-	}
 }

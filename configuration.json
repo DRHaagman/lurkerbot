@@ -14,31 +14,31 @@
 				{
 					"name":"#twdev.bot",
 					"flags":"oV",
-          "actiontrigger":"~",
-          "action":[
-            {
-              "name":"search",
-              "aliases":"s",
-              "action":"http://www.google.com/search?q=$1+site=$2",
-              "type":"http",
+					"actiontrigger":"~",
+					"action":[
+						{
+							"name":"search",
+							"aliases":"s",
+							"action":"http://www.google.com/search?q=$1+site=$2",
+							"type":"http",
 							"command":"search <term> <site>",
 							"help":"Search for a specific term from a specified site. [Google]"
-            }
+						}
 					]
 				},
 				{
 					"name":"#batcave",
 					"flags":"Ov",
-          "actiontrigger":"~",
-          "action":[
-            {
-              "name":"search",
-              "aliases":"s",
-              "action":"http://www.google.com/search?q=$1",
-              "type":"http",
+					"actiontrigger":"~",
+					"action":[
+						{
+							"name":"search",
+							"aliases":"s",
+							"action":"http://www.google.com/search?q=$1",
+							"type":"http",
 							"command":"search <term>",
 							"help":"Search for a specific term from a specified site. [Google]"
-            }
+						}
 					]
 				}
 			]
